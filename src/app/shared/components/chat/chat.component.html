@@ -1,0 +1,231 @@
+<div id="live-chat" [ngClass]="{ 'vis': showDiv}">
+	<header class="clearfix">
+
+		<h2 style="text-align: center;" *ngIf="customer">Welcome {{customer.name}}</h2>
+		<h2 style="text-align: center;" *ngIf="!customer">Welcome</h2>
+		<h4 style="text-align: center;" *ngIf="activeRooms.length == 0">Sorry; No active agent is available</h4>
+	</header>
+	<div class="chat">
+		<div #scrollMe class="chatList" [scrollTop]="scrollMe.scrollHeight">
+			<ul class="chats">
+				<li *ngFor="let msg of messages">
+					<div class="direct-chat-msg right" *ngIf="msg.message == 'user'">
+						<div class="direct-chat-info clearfix" style="margin-bottom: -47px; margin-top: 12px; margin-right: 2px;">
+							<img class="direct-chat-img-right pull-right" src="assets/user.png" alt="message user image">
+						</div>
+						<div class="direct-chat-text-right">
+							{{msg.msgre}}
+						</div>
+						<!-- /.direct-chat-text -->
+					</div>
+					<!-- Admin templates -->
+					<div class="direct-chat-msg" *ngIf="msg.message == 'admin'  && msg.msgre &&  !msg.action" style="margin-top: 25px; margin-left: -38px;">
+						<div class="direct-chat-info clearfix" style="margin-bottom: -47px;">
+							<img class="direct-chat-img pull-left" src="assets/bot.png" alt="message user image">
+						</div>
+						<!-- width: fit-content; -->
+						<div class="direct-chat-text" *ngIf="msg.msgre" style=" margin-right: 33px;">
+							{{msg.msgre}}
+						</div>
+					</div>
+					<!-- BOT messages templates -->
+					<!-- templates for json data  -->
+					<div class="direct-chat-msg" style="margin-top: 25px; margin-left: -38px;" *ngIf="msg.action">
+						<!-- image list -->
+						<ngx-carousel [inputs]="carouselTileTwo" (carouselLoad)="carouselTileTwoLoad()" *ngIf="msg.imageList">
+							<ngx-tile NgxCarouselItem *ngFor="let data of msg.msgre; let i = index;">
+								<div class="wBg">
+									<div class="tiles" [style.background]="'url(' + data.image_url + ')'" *ngIf="data.image_url">
+									</div>
+									<span style="font-size: 15px; margin-left: 2px; color: #0980ec;">{{data.title}}</span>
+									<p>{{data.subtitle}}</p>
+									<div class="" *ngFor="let button of data.buttons" style="text-align: center; border-top: 2px solid #f5f3f2;  padding: 5px 0px 5px 0px;">
+										<a (click)="sendMessageQR(button)" style="margin-left: 10%;  font-size: 13px; color: blue;"><span>{{button.title}}</span></a>
+									</div>
+								</div>
+							</ngx-tile>
+							<button NgxCarouselPrev class="leftRs">&lt;</button>
+							<button NgxCarouselNext class="rightRs">&gt;</button>
+						</ngx-carousel>
+						<!-- list with title -->
+						<ngx-carousel [inputs]="carouselTileTwo" (carouselLoad)="carouselTileTwoLoad()" *ngIf="msg.list">
+							<ngx-tile NgxCarouselItem *ngFor="let tile of msg.msgre; let i = index;">
+								<div class="wBg">
+									<h4>Tile</h4>
+									<p>content</p>
+									<div class="" style="text-align: center;">
+										<button type="button" name="button" class="btn btn-primary" style="margin-bottom: 5px;" (click)="sendMessage('Tile')">bterwrwrwerrwen</button>
+									</div>
+								</div>
+							</ngx-tile>
+							<button NgxCarouselPrev class="leftRs">&lt;</button>
+							<button NgxCarouselNext class="rightRs">&gt;</button>
+						</ngx-carousel>
+						<!-- quick_replies -->
+						<div class="scrollmenu" *ngIf="msg.quickReplies">
+							<a (click)="sendMessageQR(quickReplies)" *ngFor="let quickReplies of msg.msgre; let i = index;">{{quickReplies.title}}</a>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div #chatMe class="panel-footer" style="padding: 0px;">
+			<form #chatForm="ngForm" name="send_message_form" data-id="message-form" style="padding: 7px 3px 12px 3px; background-color: #f5f3f2; border-radius: 0 0 10px 10px;">
+				<div class="input-group">
+					<input type="text" class="form-control input-sm" [(ngModel)]="message" name="message" (keydown.enter)="sendMessage(message)" placeholder="Type your message here...">
+
+					<span class="input-group-btn">
+						<div class="row" style="margin-top: 5px; margin-left: 2px;">
+							<div class="col-6">
+								<button  class="btn btn-primary btn-sm" type="button" (click)="sendMessage(message)" style="background-color: #f5f3f2; color: #109ccf; border: none;">
+									<i class="fa fa-paper-plane" aria-hidden="true"></i>
+								</button>
+							</div>
+							<div class="col-6">
+								<label for="file-input">
+										<a>
+												<i class="fa fa-paperclip" style="font-size: 20px;  margin-top: 3px;"></i>
+										</a>
+								</label>
+								<input type="file" onclick="this.value = null" (change)="fileuploaderFileChange($event, modalimportNameChange)" class="file-input hide" name="file-input" hidden id="file-input">
+
+							</div>
+						</div>
+					</span>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="" style="position: absolute; bottom: 0;right:0;  margin-bottom: 25px; margin-right: 50px;">
+	<button type="button" class="btn btn-primary btn-lg pull-right btnHideShow" (click)="toggleChat(showDiv)"> <img class="direct-chat-img" src="assets/bot.png" alt="Bot" *ngIf="showDiv"><i class="fa fa-times" style="font-size: 30px; padding-right: 15px;" *ngIf="!showDiv"></i></button>
+</div>
+
+<div class="">
+	<!--  Registration -->
+	<ng-template #registrationModal let-c="close" let-d="dismiss">
+		<div class="modal-dialog local-modal-dialogue" *ngIf="showLogin == null">
+			<div class="modal-content">
+				<form #entityForm="ngForm">
+					<div class="modal-header local-modal-content-header">
+						<h1 class="modal-title">Login</h1>
+					</div>
+					<div class="modal-body local-modal-content-body">
+
+						<!-- email -->
+						<div class="col-md-12">
+							<div class="row form-group">
+								<div class="col-md-6">
+									<button type="button" class="btn btn-primary" (click)="showLogin = 1">Login</button>
+								</div>
+								<div class="col-md-6">
+									<button type="button" class="btn btn-primary" (click)="showLogin = 2">Registration</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="modal-dialog local-modal-dialogue" *ngIf="showLogin == 1">
+			<div class="modal-content">
+				<form #entityForm="ngForm">
+					<div class="modal-header local-modal-content-header">
+						<h1 class="modal-title">Login</h1>
+					</div>
+					<div class="modal-body local-modal-content-body">
+
+						<!-- email -->
+						<div class="col-md-12">
+							<div class="row form-group">
+								<div class="col-4">
+									<label class="col control-label" style="margin-top: 10px; font-size: 11pt;">
+								Email<span style="color: red">*</span>
+							</label>
+								</div>
+								<div class="col-8 " style="margin-bottom: 10px;">
+									<input type="email" class="form-control" style="margin-top: 8px; font-size: 10pt;" placeholder="Email" name="loginEmail" id="loginEmail" #loginEmail="ngModel" [(ngModel)]="reg.email" required autocomplete="off">
+									<div *ngIf="loginEmail.errors && (loginEmail.dirty || loginEmail.persistent)">
+										<div [hidden]="!loginEmail.errors.required" class="alert alert-danger" style="margin-bottom: 0; padding: 0.5rem 1.25rem">Email required.</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer local-modal-footer" style="padding-right: 6px">
+							<a href="javascript:;" class="btn btn-md btn-white " style="font-size: 11pt" data-dismiss="modal" (click)="showLogin = null">Back</a>
+							<button type="submit" class="btn btn-md btn-primary " style="font-size: 11pt; font-family: Arial;" [disabled]="!entityForm.form.valid" (click)="login(reg.email)">Login</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="modal-dialog local-modal-dialogue" *ngIf="showLogin == 2">
+				<div class="modal-content">
+					<form #entityForm="ngForm">
+						<div class="modal-header local-modal-content-header">
+							<h1 class="modal-title">Registration</h1>
+						</div>
+						<div class="modal-body local-modal-content-body">
+							<!-- Name -->
+							<div class="col-md-12">
+								<div class="row form-group">
+									<div class="col-4">
+										<label class="col control-label" style="margin-top: 10px; font-size: 11pt;">
+										Name<span style="color: red">*</span>
+									</label>
+									</div>
+									<div class="col-8 " style="margin-bottom: 10px;">
+										<input type="text" class="form-control" style="margin-top: 8px; font-size: 10pt;" placeholder="Name" name="regNames" id="regName" #regNames="ngModel" [(ngModel)]="reg.name" required autocomplete="off">
+										<div *ngIf="regNames.errors && (regNames.dirty || regNames.persistent)">
+											<div [hidden]="!regNames.errors.required" class="alert alert-danger" style="margin-bottom: 0; padding: 0.5rem 1.25rem">Name required.</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Password -->
+							<div class="col-md-12">
+								<div class="row form-group">
+									<div class="col-4">
+										<label class="col control-label" style="margin-top: 10px; font-size: 11pt;">
+									Password<span style="color: red">*</span>
+								</label>
+									</div>
+									<div class="col-8 " style="margin-bottom: 10px;">
+										<input type="password" class="form-control" style="margin-top: 8px; font-size: 10pt;" placeholder="Password" name="password" id="password" #password="ngModel" [(ngModel)]="reg.password" required autocomplete="off">
+										<div *ngIf="password.errors && (password.dirty || password.persistent)">
+											<div [hidden]="!password.errors.required" class="alert alert-danger" style="margin-bottom: 0; padding: 0.5rem 1.25rem">Password required.</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- email -->
+							<div class="col-md-12">
+								<div class="row form-group">
+									<div class="col-4">
+										<label class="col control-label" style="margin-top: 10px; font-size: 11pt;">
+									Email<span style="color: red">*</span>
+								</label>
+									</div>
+									<div class="col-8 " style="margin-bottom: 10px;">
+										<input type="email" class="form-control" style="margin-top: 8px; font-size: 10pt;" placeholder="Email" name="regEmail" id="regEmail" #regEmail="ngModel" [(ngModel)]="reg.email" required autocomplete="off">
+										<div *ngIf="regEmail.errors && (regEmail.dirty || regEmail.persistent)">
+											<div [hidden]="!regEmail.errors.required" class="alert alert-danger" style="margin-bottom: 0; padding: 0.5rem 1.25rem">Email required.</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="modal-footer local-modal-footer" style="padding-right: 6px">
+								<a href="javascript:;" class="btn btn-md btn-white " style="font-size: 11pt" (click)="showLogin = null">Back</a>
+								<button type="submit" class="btn btn-md btn-primary " style="font-size: 11pt; font-family: Arial;" [disabled]="!entityForm.form.valid" (click)="createNewUser(reg)">Create</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+	</ng-template>
+</div>

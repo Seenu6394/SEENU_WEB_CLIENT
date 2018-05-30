@@ -1,0 +1,39 @@
+{
+	"message": {
+    "attachment": {
+      "type": "template",
+      "payload": {
+        "template_type": "generic",
+        "elements": [{
+          "title": "JAGUAR XF",
+          "subtitle": "2018 - F DUBAI 3",
+          "image_url": "https://cdn.raffine.eu/api/v1/image/6800/w/910.jpg",
+          "buttons": [{
+            "type": "postback",
+            "title": "JAGUAR XF",
+            "payload": "JAGUAR XF"
+          }]
+        }, {
+          "title": "Range Rover Evoque",
+          "subtitle": "2018 - S DUBAI 1",
+          "image_url": "https://assets.gocar.be/picserver1/userdata/1/26513/VnjRxhgqF/kfz47733759_883725836-1.jpg",
+          "buttons": [{
+            "type": "postback",
+            "title": "Range Rover Evoque",
+            "payload": "Range Rover Evoque"
+          }]
+        }, {
+          "title": "Range Rover Sport",
+          "subtitle": "2018 - DUBAI 5",
+          "image_url": "https://car-images.bauersecure.com/pagefiles/76727/rr_sport_my2018_01.jpg",
+          "buttons": [{
+            "type": "postback",
+            "title": "Range Rover Sport",
+            "payload": "Range Rover Sport"
+          }]
+        }]
+      }
+    }
+  }
+  
+  }

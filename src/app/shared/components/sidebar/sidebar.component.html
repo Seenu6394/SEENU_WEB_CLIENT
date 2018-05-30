@@ -1,0 +1,11 @@
+<!-- sidebar -->
+<nav class="sidebar" [ngClass]="{sidebarPushRight: isActive}">
+    <ul class="list-group">
+        <a routerLink="/dashboard" [routerLinkActive]="['router-link-active']" class="list-group-item"> <i class="fa fa-fw fa fa-home"></i>&nbsp;Home
+        </a>       
+        <a [routerLink]="['/re']" [routerLinkActive]="['router-link-active']" class="list-group-item"> <i class="fa fa-fw fa-code"></i>&nbsp;Regular Expression
+        </a>
+        <a [routerLink]="['/settings']" [routerLinkActive]="['router-link-active']" class="list-group-item"> <i class="fa fa-fw fa-cog"></i>&nbsp;Settings
+		    </a>
+    </ul>
+</nav>
